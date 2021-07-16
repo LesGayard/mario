@@ -4,7 +4,9 @@ import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -14,6 +16,7 @@ public class Window {
     private String title;
     private static Window window = null;
     private long gflwWindow;
+
     
     /*Singleton - one instance */
     private Window() {
@@ -34,6 +37,13 @@ public class Window {
         System.out.println("Hello Lwgjl" + Version.getVersion());
         init();
         loop();
+
+        //Free the memory
+        glfwFreeCallbacks(gflwWindow);
+        glfwDestroyWindow(gflwWindow);
+        //terminate
+        glfwTerminate();
+        glfwSetErrorCallback(null).free();
     }
 
     public void init(){
@@ -57,6 +67,15 @@ public class Window {
             throw new IllegalStateException("Failed to create the GLFW Window!");
         }
 
+        /* Mouse Event */
+        glfwSetCursorPosCallback(gflwWindow,MouseListener::mousePosCallBack);
+        glfwSetMouseButtonCallback(gflwWindow,MouseListener::mouseButtonCallBack);
+        glfwSetScrollCallback(gflwWindow,MouseListener::mouseScrollCallBack);
+
+        /* Keyboard Event */
+        glfwSetKeyCallback(gflwWindow,KeyListener::keyCallBack);
+
+
         /* Make the OpenGL context current */
         glfwMakeContextCurrent(gflwWindow);
         /* Enale v-sync */
@@ -77,6 +96,10 @@ public class Window {
             // how to clear the buffer
             glClear(GL_COLOR_BUFFER_BIT);
 
+            /* Test the Key Event */
+            if (KeyListener.keyPressed(GLFW_KEY_SPACE)){
+                System.out.println("space key is pressed ");
+            }
             glfwSwapBuffers(gflwWindow);
         }
 
