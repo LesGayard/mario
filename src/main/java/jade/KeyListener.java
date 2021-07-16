@@ -19,11 +19,17 @@ public class KeyListener {
     }
 
     public static void keyCallBack (long window, int key, int scancode, int action, int mods){
-        if(action == GLFW_PRESS){
-            get().keyPressed[key] = true;
-        }else if (action == GLFW_RELEASE){
-            get().keyPressed[key] = false;
+        if(key < 0){
+            System.err.println("Error!");
+        }else{
+            if(action == GLFW_PRESS){
+                System.out.println("pressed");
+                get().keyPressed[key] = true;
+            }else if (action == GLFW_RELEASE){
+                get().keyPressed[key] = false;
+            }
         }
+
     }
 
     public static boolean keyPressed(int keyCode){
